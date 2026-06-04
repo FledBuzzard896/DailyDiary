@@ -1,17 +1,16 @@
+import os
 import psycopg2
 from psycopg2.extras import RealDictCursor # Получение результатов из БД
+from dotenv import load_dotenv
 
-DB_CONFIG = {
-    'host': 'localhost',
-    'port': '5432',
-    'user': 'postgres',
-    'database': 'daily_diary'
-}
+load_dotenv() # берёт переменные из .env
+
+DB_CONFIG = os.getenv("DATABASE_CONFIG")
 
 def get_db():
     connection = None
     try:
-        connection = psycopg2.connect(**DB_CONFIG)
+        connection = psycopg2.connect(DB_CONFIG)
         # RealDictCursor нужен, чтобы строки из БД возвращались как {'id': 1, 'title': 'Запись'}
         cursor = connection.cursor(cursor_factory=RealDictCursor)
         # Передаем управление в ручку FastAPI

@@ -9,14 +9,8 @@ SELECT_TASKS: Final[str] = """
 SELECT * FROM Tasks;
 """
 
-SELECT_LAST_ID : Final[str] = """
-SELECT ID FROM Tasks
-ORDER BY ID DESC
-LIMIT 1;
-"""
-
-CREATE_TASK : Final[str] = """
-INSERT INTO Tasks(Title, UserID, IsCompleted, CreatedAt)
-VALUES($s, $s, $s, NOW())
-RETURNING *;
+CREATE_TASK: Final[str] = """
+INSERT INTO tasks (title, description, user_id, status_id, created_at, updated_at, deadline, completed_at, is_deleted)
+VALUES ($s, $s, $s, $s, NOW(), NOW(), $s, $s, FALSE)
+RETURNING id, title, description, created_at, updated_at, deadline, completed_at, user_id, status_id, is_deleted;
 """
