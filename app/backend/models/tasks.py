@@ -22,5 +22,5 @@ class TaskResponse(TaskBase):
     task_id: int
     title: str
     user_id: int
-    is_completed: bool = False
+    is_completed: bool = False  
     created_at: datetime
