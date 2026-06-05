@@ -20,23 +20,21 @@ router = APIRouter(
 @router.get("/{task_id}", response_model=TaskResponse)
 async def read_task(task_id: int, db = Depends(get_db)):
     """ Выводит одну задачу по её ID. """
-    db.execute(SELECT_TASKS, (task_id,))
-    task = db.fetchone()
+    row = await db.fetchrow(SELECT_TASK, task_id)
 
-    if not task:
+    if not row:
         raise HTTPException(status_code=404, detail="Индекс задачи не найден.")
-    return task
+    return dict(row)
 
 
 @router.get("/", response_model=list[TaskResponse])
 async def read_all_tasks(db = Depends(get_db)):
     """ Выводит все задачи. """
-    db.execute(SELECT_TASKS)
-    tasks = db.fetchall()
+    rows = await db.fetch(SELECT_TASKS)
 
-    if not tasks:
+    if not rows:
         raise HTTPException(status_code=404, detail="Задачи не найдены. ")
-    return tasks
+    return [dict(row) for row in rows] # конвертация строки Record в словарь
 
 
 @router.post("/", response_model=TaskCreate)

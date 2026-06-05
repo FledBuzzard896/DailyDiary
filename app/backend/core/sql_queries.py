@@ -14,3 +14,8 @@ INSERT INTO tasks (title, description, user_id, status_id, created_at, updated_a
 VALUES ($s, $s, $s, $s, NOW(), NOW(), $s, $s, FALSE)
 RETURNING id, title, description, created_at, updated_at, deadline, completed_at, user_id, status_id, is_deleted;
 """
+
+SELECT_USER_BY_LOGIN: Final[str] = """
+SELECT * FROM Users;
+WHERE
+"""
