@@ -1,12 +1,12 @@
 from typing import Final
 
 SELECT_TASK : Final[str] = """
-SELECT * FROM Tasks
-WHERE ID = $s;
+SELECT * FROM tasks
+WHERE id = $s;
 """
 
 SELECT_TASKS: Final[str] = """
-SELECT * FROM Tasks;
+SELECT * FROM tasks;
 """
 
 CREATE_TASK: Final[str] = """
@@ -16,6 +16,11 @@ RETURNING id, title, description, created_at, updated_at, deadline, completed_at
 """
 
 SELECT_USER_BY_LOGIN: Final[str] = """
-SELECT * FROM Users;
-WHERE
+SELECT * FROM users;
+WHERE login = $s;
+"""
+
+SELECT_USER_BY_ID: Final[str] = """
+SELECT * FROM users;
+WHERE id = $s;
 """

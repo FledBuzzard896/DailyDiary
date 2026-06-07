@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 
+from app.backend.core.security import get_current_user
 from app.backend.models.tasks import TaskResponse, TaskCreate
 from app.backend.core.sql_queries import SELECT_TASK, SELECT_TASKS, CREATE_TASK
 from app.backend.core.database import get_db
@@ -40,7 +41,7 @@ async def read_all_tasks(db = Depends(get_db)):
 @router.post("/", response_model=TaskCreate)
 async def create_task(task: TaskCreate,
                       db = Depends(get_db),
-                      current_user: User = Depends(get_current_user)):
+                      current_user = Depends(get_current_user)):
     """ Создание задачи. """
     if task.status_id is not None:
         status_id = task.status_id
