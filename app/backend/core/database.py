@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv() # берёт переменные из .env
 
-DB_URL = os.getenv("DATABASE_CONFIG")
+DB_URL = os.getenv("DATABASE_URL")
 
 db_pool : asyncpg.Pool | None = None
 async def get_db():

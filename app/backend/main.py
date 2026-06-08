@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from app.backend.routers.tasks import router as task_router
 
 import asyncpg
 import app.backend.core.database as db # Импортируем наш модуль базы данных
@@ -23,9 +24,9 @@ app = FastAPI(
     title="Daily Diary",
     description="Ежедневник для ваших планов",
     version="1.0",
-    license=lifespan
+    lifespan=lifespan
 )
-
+app.include_router(task_router)
 
 
 # ===== Проверка =====

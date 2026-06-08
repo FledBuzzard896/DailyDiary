@@ -15,7 +15,7 @@ load_dotenv()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")  # URL вашего эндпоинта логина
 
 SECRET_KEY = os.getenv('SECRET_KEY')
-ALGORYTHM = os.getenv('ALGORYTHM', "HS256")
+ALGORITHM = os.getenv('ALGORITHM', "HS256")
 ACCESS_TOKEN = int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES', 30))
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -50,7 +50,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     else:
         expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN)
     to_encode.update({"exp": expire})                                           # добавляем поле "exp" (время истечения)
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORYTHM)        # кодировка токена
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)        # кодировка токена
     return encoded_jwt
 
 async def get_current_user(
@@ -64,7 +64,7 @@ async def get_current_user(
     )
     try:
         # 1. Декодируем токен и извлекаем user_id
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORYTHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id: str = payload.get("sub")
         if user_id is None:
             raise credentials_exception

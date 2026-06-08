@@ -19,8 +19,8 @@ class StatusResponse(StatusBase):
     class Config:
         from_attributes = True
 
+
 # Модели для tasks
-# ========================
 class TaskBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=100, description="Название задачи")
     description: Optional[str] = Field(None, description="Описание задачи")
@@ -52,7 +52,7 @@ class TaskResponse(TaskBase):
     @computed_field
     @property
     def is_completed(self) -> bool:
-        """Вычисляемое поле: задача считается выполненной, если её статус = 1 (Выполнено)"""
+        """Вычисляемое поле: задача считается выполненной, если статус = 1 (Выполнено)"""
         return self.status_id == 1
 
     class Config:

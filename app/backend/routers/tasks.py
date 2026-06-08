@@ -45,18 +45,9 @@ async def create_task(task: TaskCreate,
     """ Создание задачи. """
     if task.status_id is not None:
         status_id = task.status_id
-    values = (
-        task.title,
-        task.description,
-        task.deadline,
-        current_user.id,
-        status_id,
-    )
-
-    try:
-        row = await db.execute(CREATE_TASK, *values)
-        if not row:
-            raise HTTPException(status_code=500, detail="Сервер: Создание задачи завершилось ошибкой.")
-        return TaskResponse(**dict(row))
-    except Exception as error:
-        raise HTTPException(status_code=400, detail=f"Ошибка в запросе: {str(error)}")
+    row = await db.fetchrow(CREATE_TASK,
+                            task.title, task.description, task.deadline,
+                            current_user.id, status_id)
+    if not row:
+        raise HTTPException(500, "Не удалось создать задачу")
+    return TaskResponse(**dict(row))
