@@ -4,13 +4,53 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.backend.core.database import get_db
-from app.backend.core.security import authenticate_user, ACCESS_TOKEN, create_access_token
+from app.backend.core.security import authenticate_user, ACCESS_TOKEN, create_access_token, get_password_hash
+from app.backend.core.sql_queries import SELECT_USER_BY_LOGIN, INSERT_USER
+from app.backend.models.users import UserResponse, UserInDB, UserCreate
 
 router = APIRouter(
     prefix="/auth",
     tags=["Authentication"],
 )
 
+
+
+# ===========================================
+#               РЕГИСТРАЦИЯ
+# ===========================================
+@router.post("/register", response_model=UserResponse)
+async def register(user_data: UserCreate, db = Depends(get_db)):
+    existing = await db.fetchrow(SELECT_USER_BY_LOGIN, user_data.login, user_data.email)
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Пользователь с таким логином или email уже существует",
+        )
+
+    hashed_password = get_password_hash(user_data.password)
+
+    row = await db.fetchrow(
+        INSERT_USER,
+        user_data.login,
+        hashed_password,
+        user_data.name,
+        user_data.surname,
+        user_data.email
+    )
+
+    if not row:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Не удалось создать пользователя",
+        )
+
+    return UserResponse(**dict(row))
+
+
+
+# ===========================================
+#               АВТОРИЗАЦИЯ
+# ===========================================
 @router.post("/token")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(),
                 db = Depends(get_db)
@@ -22,7 +62,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(),
                             headers={"WWW-Authenticate": "Bearer"})
     access_token_expires = timedelta(minutes=ACCESS_TOKEN)
     access_token = create_access_token(
-        data={"sub": str(user.id)},
+        data={"sub": str(user["id"])},
         expires_delta=access_token_expires
     )
     return {"token": access_token, "token_type": "bearer"}

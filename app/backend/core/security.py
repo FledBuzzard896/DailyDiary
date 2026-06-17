@@ -1,4 +1,5 @@
 import os
+import bcrypt
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
@@ -38,7 +39,7 @@ def get_password_hash(password):
 async def authenticate_user(db, login: str, password: str):
     """Находит пользователя в БД по логину и проверяет пароль."""
     user = await db.fetchrow(SELECT_USER_BY_LOGIN, login)
-    if not user or not verify_password(password, user.password_hash):
+    if not user or not verify_password(password, user['password_hash']):
         return False
     return user
 

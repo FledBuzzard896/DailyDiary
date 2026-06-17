@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from app.backend.routers.tasks import router as task_router
+from app.backend.routers.auth import router as auth_router
 
 import asyncpg
 import app.backend.core.database as db # Импортируем наш модуль базы данных
@@ -26,8 +27,9 @@ app = FastAPI(
     version="1.0",
     lifespan=lifespan
 )
-app.include_router(task_router)
 
+app.include_router(task_router)
+app.include_router(auth_router)
 
 # ===== Проверка =====
 @app.get("/")
